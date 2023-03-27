@@ -1,0 +1,30 @@
+version: 2
+
+seeds:
+  - name: dim_country
+    description: Country master data.
+    config:
+      tags: 
+        - lov
+        - static
+    meta:
+      contains_test_data: false
+      owner: "@saurav.mitra"
+    columns: 
+      - name: country
+        description: Country Name.
+        tests:
+          - not_null
+          - unique
+      - name: country_isocode
+        description: Country ISO Code.
+        tests:
+          - not_null
+      - name: currency
+        description: Currency Name.
+        tests:
+          - not_null
+      - name: currency_code
+        description: Currency Code.
+        tests:
+          - not_null
