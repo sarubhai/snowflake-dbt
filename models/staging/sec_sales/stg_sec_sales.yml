@@ -1,0 +1,222 @@
+version: 2
+
+models:
+  - name: stg_region
+    description: |
+      Region Table.
+      It is used in analysis of Sales based on region
+    config:
+      tags:
+        - sec_sales
+        - dms
+        - daily
+      meta:
+        contains_test_data: false
+        owner: "@saurav.mitra"
+      # re_data
+      # re_data_monitored: true
+      # re_data_time_filter: etl_loaded_at
+    columns:
+      - name: region_code
+        description: "Region Identifier Code"
+        tests:
+          - unique
+          - not_null
+      - name: region_desc_eng
+        description: "Region Description English"
+        tests:
+          - not_null
+      - name: region_desc_chn
+        description: "Region Description Chinese"
+      - name: etl_loaded_at
+        description: "ETL Loaded Timestamp"
+
+
+  - name: stg_province
+    description: |
+      Province Table. A province belongs to a [region](#!/model/model.snowflake_dwh.stg_region).
+      It is used in analysis of Sales based on province
+    config:
+      tags:
+        - sec_sales
+        - dms
+        - daily
+    columns:
+      - name: province_code
+        description: "Province Identifier Code"
+        tests:
+          - unique
+          - not_null
+      - name: province_desc_eng
+        description: "Province Description English"
+        tests:
+          - not_null
+      - name: province_desc_chn
+        description: "Province Description Chinese"
+      - name: region_code
+        description: "Region Code of the Provice"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_region')
+              field: region_code
+      - name: etl_loaded_at
+        description: "ETL Loaded Timestamp"
+
+
+  - name: stg_distributor_type
+    description: "Distributor Type Table"
+    columns:
+      - name: distributor_type_code
+        description: "Distributor Type Code"
+        tests:
+          - unique
+          - not_null
+      - name: distributor_type_desc_eng
+        description: "Distributor Type Description English"
+        tests:
+          - not_null
+      - name: distributor_type_desc_chn
+        description: "Distributor Type Description Chinese"
+        tests:
+          - not_null
+      - name: etl_loaded_at
+        description: "ETL Loaded Timestamp"
+
+
+  - name: stg_distributor
+    description: "Secondary Sales Distributors Table"
+    meta:
+      contains_pii: true
+    columns:
+      - name: distributor_code
+        description: "Distributor Code"
+        tests:
+          - unique
+          - not_null
+      - name: distributor_name_chn
+        description: "Distributor Name Chinese"
+        tests:
+          - not_null
+        meta:
+          contains_pii: true
+          masking_policy: mp_encrypt_pii
+      - name: address1_chn
+        description: "Address Line 1 Chinese"
+        tests:
+          - not_null
+      - name: address2_chn
+        description: "Address Line 2 Chinese"
+      - name: address3_chn
+        description: "Address Line 3 Chinese"
+      - name: sub_urban
+        description: "Sub Urban Area Name"
+      - name: province_code
+        description: "Province Code"
+        tests:
+          - not_null
+      - name: district
+        description: "District Code"
+      - name: postcode
+        description: "Postal Code"
+      - name: email
+        description: "Contact Email"
+        tests:
+          - not_null
+        meta:
+          contains_pii: true
+          masking_policy: mp_encrypt_pii
+      - name: phone_number
+        description: "Contact Number"
+      - name: fax_number
+        description: "Fax Number"
+      - name: mobile_number
+        description: "Mobile Number"
+      - name: distributor_type_code
+        description: "Distributor Type Code"
+        tests:
+          - not_null
+      - name: contact_first_name
+        description: "Contact Person First Name"
+      - name: contact_last_name
+        description: "Contact Person Last Name"
+      - name: contact_person_title
+        description: "Contact Person Title"
+      - name: operating_company_id
+        description: "Operating Company Code of the Distributor"
+        tests:
+          - not_null
+      - name: etl_loaded_at
+        description: "ETL Loaded Timestamp"
+
+
+  - name: stg_sales_invoice
+    description: "Secondary Distribution Sales Table"
+    columns:
+      - name: sales_invoice_date
+        description: "Sales Invoice Date"
+        tests:
+          - not_null
+      - name: distributor_code
+        description: "Distributor Code"
+        tests:
+          - not_null
+      - name: customer_code
+        description: "Customer Code"
+        tests:
+          - not_null
+      - name: product_code
+        description: "Product Code"
+        tests:
+          - not_null
+      - name: sales_type
+        description: >
+          Sales Transaction Type. It can either be of -
+          S - Sales
+          R - Return
+        tests:
+          - not_null 
+          - accepted_values:
+              values: ['S', 'R']
+      - name: doc_number
+        description: "Invoice Document Number"
+        tests:
+          - not_null
+      - name: gross_sales_quantity
+        description: "Gross Sales Quantity"
+        tests:
+          - not_null
+      - name: gross_sales_amount
+        description: "Gross Sales Amount"
+        tests:
+          - not_null
+      - name: sales_return_qty
+        description: "Gross Return Quantity"
+        tests:
+          - not_null
+      - name: sales_return_amount
+        description: "Gross Return Amount"
+        tests:
+          - not_null
+      - name: discount_promotion
+        description: "Promotional Discount"
+      - name: discount_unconditional_discount
+        description: "Unconditional Discount"
+      - name: discount_settlement
+        description: "Discount Settlement"
+      - name: cogs
+        description: "Cost of Goods Sold"
+      - name: base_price_amount
+        description: "Base Price Amount"
+        tests:
+          - not_null
+      - name: uom_code
+        description: "Unit of Measurement Code"
+        tests:
+          - not_null
+      - name: salesman_code
+        description: "Saleman Code"
+        tests:
+          - not_null
+      - name: etl_loaded_at
+        description: "ETL Loaded Timestamp"
