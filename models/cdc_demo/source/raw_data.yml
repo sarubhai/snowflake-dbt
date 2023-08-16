@@ -1,0 +1,55 @@
+version: 2
+
+sources:
+  - name: cdc_demo_raw
+    description: "This is a E2E demo of how to extract the Changed Data from Source and Process the delta records."
+    loader: airflow
+    database: cdc_demo
+    schema: raw_db
+    meta:
+      contains_test_data: false
+      owner: "@saurav.mitra"
+    tags:
+      - cdc_demo
+    # default freshness
+    freshness:
+      warn_after: {count: 24, period: hour}
+      # error_after: {count: 24, period: hour}
+    loaded_at_field: etl_loaded_at
+
+
+    tables:
+      - name: raw_customers
+        description: "Customers Raw Table- Changed Source Data Append Only"
+        tags:
+          - cdc_demo
+          - customers
+        columns:
+          - name: customerid
+            description: "Customer Unique Identifier Number"
+            tests:
+              - unique
+              - not_null
+          - name: name
+            description: "Customer Full Name"
+            tests:
+              - not_null
+          - name: dob
+            description: "Customers Date of Birth"
+          - name: gender
+            description: "Customers Gender"
+          - name: marital_status
+            description: "Customers Marital Status"
+          - name: address
+            description: "Customers Address"
+          - name: postcode
+            description: "Customers Postcode"
+          - name: created_at
+            description: "Source Record Created At"
+          - name: updated_at
+            description: "Source Record Updated At"
+          - name: deleted_at
+            description: "Source Record Deleted At"
+          - name: etl_loaded_at
+            description: "ETL Loaded Timestamp"
+
