@@ -52,4 +52,5 @@ sources:
             description: "Source Record Deleted At"
           - name: etl_loaded_at
             description: "ETL Loaded Timestamp"
+      - name: raw_users
 
